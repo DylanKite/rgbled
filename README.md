@@ -9,3 +9,10 @@ This project is to learn how to control An RGB LED strip from a google home usin
   - 5V
   - 9A?
   - 45W?
+
+## Protocals
+### LED Strip:
+- PWM
+
+### Google Home To Pi
+- Web server?
