@@ -16,3 +16,9 @@ This project is to learn how to control An RGB LED strip from a google home usin
 
 ### Google Home To Pi
 - Web server?
+
+##File Descriptions
+###lib_nanosec
+- Lib_nanosec is based off of the program written by user dranger003 called nanopulse.c
+- the above program is being modified into a c++ library that can be used multiple times
+  and will be the basis for the protocol used to communicate with the LED Strip.
