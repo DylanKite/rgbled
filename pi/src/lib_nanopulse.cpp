@@ -19,10 +19,15 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
+#include <unistd.h>
+
+#include <iostream>
+
+using namespace std;
 
 unsigned base_nano[] = {4, 8, 10, 20, 40, 80, 100, 200, 250, 500, 1000};
 
-static void mynanosleep(unsigned nanos) {
+void nano_pulse::mynanosleep(unsigned nanos) {
     struct timespec ts, tr;
 
     ts.tv_sec = 0;
@@ -32,7 +37,7 @@ static void mynanosleep(unsigned nanos) {
     }
 }
 
-int gpioSetMode(unsigned gpio, unsigned mode) {
+int nano_pulse::gpioSetMode(unsigned gpio, unsigned mode) {
     int reg, shift;
 
     reg = gpio / 10;
@@ -43,7 +48,7 @@ int gpioSetMode(unsigned gpio, unsigned mode) {
     return 0;
 }
 
-int gpioGetMode(unsigned gpio) {
+int nano_pulse::gpioGetMode(unsigned gpio) {
     int reg, shift;
 
     reg = gpio / 10;
@@ -52,7 +57,7 @@ int gpioGetMode(unsigned gpio) {
     return (*(gpioReg + reg) >> shift) & 7;
 }
 
-static void initPWM(unsigned divider) {
+void nano_pulse::initPWM(unsigned divider) {
     /* reset PWM clock */
     clkReg[CLK_PWMCTL] = CLK_PASSWD | CLK_CTL_KILL;
 
@@ -83,8 +88,7 @@ static void initPWM(unsigned divider) {
     mynanosleep(10000);
 }
 
-static void sendPulse(unsigned bits) {
-    int i;
+void nano_pulse::sendPulse(unsigned bits) {
     uint32_t word;
 
     if (bits == 0)
@@ -106,9 +110,10 @@ static void sendPulse(unsigned bits) {
     if (bits) {
         word = 0;
 
-        for (i = 0; i < bits; i++)
+        for (unsigned int i = 0; i < bits; i++)
+        {
             word |= (1 << (31 - i));
-
+        }
         pwmReg[PWM_FIFO] = word;
     }
 
@@ -118,15 +123,16 @@ static void sendPulse(unsigned bits) {
     pwmReg[PWM_CTL] = PWM_CTL_USEF1 | PWM_CTL_MODE1 | PWM_CTL_PWEN1;
 }
 
-static uint32_t *mapMem(int fd, unsigned base, unsigned len) {
-    return mmap(0, len, PROT_READ | PROT_WRITE | PROT_EXEC,
-                MAP_SHARED | MAP_LOCKED, fd, base);
+uint32_t *nano_pulse::mapMem(int fd, unsigned base, unsigned len) {
+    uint32_t *rtn_map;
+    rtn_map = (uint32_t*)mmap(0, len, PROT_READ | PROT_WRITE | PROT_EXEC,
+                               MAP_SHARED | MAP_LOCKED, fd, base);
+    return rtn_map;
 }
 
 pwm_clock_cfg_t nano_pulse::getDivBits(unsigned nano) {
     pwm_clock_cfg_t cfg;
 
-    unsigned base;
     unsigned bits;
     unsigned err;
     unsigned bestErr = -1;
@@ -167,13 +173,13 @@ nano_pulse::nano_pulse() {
 
     fd_mem = open("/dev/mem", O_RDWR | O_SYNC);
     if (fd_mem < 0) {
-        printf("need to run as root, e.g. sudo %s\n", argv[0]);
+        printf("need to run as root, e.g. sudo\n");
         exit(1);
     }
 
-    *clkReg = MAP_FAILED;
-    *gpioReg = MAP_FAILED;
-    *pwmReg = MAP_FAILED;
+    clkReg = (uint32_t*)MAP_FAILED;
+    gpioReg = (uint32_t*) MAP_FAILED;
+    pwmReg = (uint32_t*)MAP_FAILED;
 
     gpioReg = mapMem(fd_mem, GPIO_BASE, GPIO_LEN);
     pwmReg = mapMem(fd_mem, PWM_BASE, PWM_LEN);

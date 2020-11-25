@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <iostream>
+
+using namespace std;
 int main(int argc, char *argv[]) {
     int i;
     int gpio;
@@ -14,7 +17,6 @@ int main(int argc, char *argv[]) {
 
     pwm_clock_cfg_t cfg;
     nano_pulse nano;
-
     if (argc > 1) {
         nanos = atoi(argv[1]);
     }
@@ -35,20 +37,18 @@ int main(int argc, char *argv[]) {
     if (gap < 0) {
         gap = 0;
     }
-
+    cout << "set cfg";
     cfg = nano.getDivBits(nanos);
 
     printf("%d pulses of %d nanos with gap of %d nanos (div=%d bits=%d)\n",
            pulses, cfg.divider * 2 * cfg.bits, gap, cfg.divider, cfg.bits);
 
 
-    initPWM(cfg.divider);
+    nano.initPWM(cfg.divider);
 
     for (i = 0; i < pulses; i++) {
-        sendPulse(cfg.bits);
+        nano.sendPulse(cfg.bits);
 
-        mynanosleep(nanos + gap);
+        nano.mynanosleep(nanos + gap);
     }
-
-
 }
