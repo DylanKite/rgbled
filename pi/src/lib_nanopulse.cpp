@@ -28,7 +28,8 @@ using namespace std;
 unsigned base_nano[] = {4, 8, 10, 20, 40, 80, 100, 200, 250, 500, 1000};
 
 void nano_pulse::mynanosleep(unsigned nanos) {
-    struct timespec ts, tr;
+    struct timespec ts; // requested
+    struct timespec tr; // remaining
 
     ts.tv_sec = 0;
     ts.tv_nsec = nanos;
@@ -100,7 +101,7 @@ void nano_pulse::sendPulse(unsigned bits) {
 
     pwmReg[PWM_CTL] = PWM_CTL_CLRF1;
 
-    mynanosleep(10000);
+    //mynanosleep(10000);
 
     while (bits >= 32) {
         pwmReg[PWM_FIFO] = -1;

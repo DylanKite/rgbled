@@ -49,6 +49,6 @@ int main(int argc, char *argv[]) {
     for (i = 0; i < pulses; i++) {
         nano.sendPulse(cfg.bits);
 
-        nano.mynanosleep(nanos + gap);
+        nano.mynanosleep(10000);//nanos + gap);
     }
 }
