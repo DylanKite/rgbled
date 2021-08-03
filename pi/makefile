@@ -2,8 +2,8 @@ CC=g++
 CFLAGS=-I -Wall 
 INC=./include/
 SRC=./src/
-LIBS=-pigpio -lrt -pthread 
-LIB_PATH= -L/usr/local/include/
+LIBS=-lpigpio -lrt -pthread 
+LIB_PATH= -L/usr/local/include
 %.o: %.c $(DEPS)
 #nano_test: test_nano.o lib_nanopulse.o
 #	$(CC) test_nano.o lib_nanopulse.o $(CFLAGS)
@@ -16,10 +16,10 @@ LIB_PATH= -L/usr/local/include/
 
 
 spi_test: test_spi.o lib_spi4pi.o
-	$(CC) $(CFLAGS) test_spi.o lib_spi4pi.o #$(LIBS)
+	$(CC) $(CFLAGS) test_spi.o lib_spi4pi.o $(LIB_PATH) $(LIBS)
 
 lib_spi4pi.o: $(SRC)lib_spi4pi.cpp $(INC)lib_spi4pi.h
-	$(CC) $(CFLAGS) -c $(SRC)lib_spi4pi.cpp #$(LIB_PATH) $(LIBS)
+	$(CC) $(CFLAGS) -c $(SRC)lib_spi4pi.cpp $(LIB_PATH) $(LIBS)
 
 test_spi.o:  $(SRC)test_spi.cpp
 	$(CC) $(CFLAGS) -c $(SRC)test_spi.cpp #$(LIBS)

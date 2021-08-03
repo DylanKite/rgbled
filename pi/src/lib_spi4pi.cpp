@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pigpio.h>
+#include <iostream>
 
 using namespace std;
 
@@ -25,5 +26,6 @@ spi4pi::~spi4pi()
 int spi4pi::send_message(char *buffer)
 {
     spiWrite(spi_handle, buffer, 4);
+    cout << "writing spi";
     return 0;
 }
