@@ -20,7 +20,7 @@
 #define PIN_MOSI 10
 #define PIN_MISO 9
 #define PIN_SCLK 11
-#define PIN_SS 25
+#define PIN_SS 8
 class spi4pi {
 public:
     spi4pi();

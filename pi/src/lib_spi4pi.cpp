@@ -12,9 +12,10 @@ spi4pi::spi4pi()
     //set gpio mode
     // initialize connection
     gpioInitialise();
-    gpioSetMode(PIN_SCLK, PI_OUTPUT);
-    gpioSetMode(PIN_MOSI, PI_OUTPUT);
-    gpioSetMode(PIN_SS, PI_OUTPUT);
+    gpioSetMode(PIN_SCLK, PI_ALT0);
+    gpioSetMode(PIN_MOSI, PI_ALT0);
+    gpioSetMode(PIN_MISO, PI_ALT0);
+    gpioSetMode(PIN_SS, PI_ALT0);
     spi_handle = spiOpen(SPI_CHANNEL, SPI_BAUD, SPI_FLAGS);
 }
 spi4pi::~spi4pi()
